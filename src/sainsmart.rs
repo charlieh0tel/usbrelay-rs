@@ -8,7 +8,7 @@ pub struct SainSmartFourChannelRelay {
 }
 
 impl SainSmartFourChannelRelay {
-    const N_CHANNELS: u8 = 4;
+    pub const N_CHANNELS: u8 = 4;
     const MASK: u8 = (1 << Self::N_CHANNELS) - 1;
 
     pub fn new(ftdi_device_string: &str) -> Result<Self> {
