@@ -6,8 +6,13 @@ use usbrelay_rs::sainsmart::SainSmartFourChannelRelay;
 #[derive(Parser)]
 #[command(version, about, long_about=None)]
 struct Cli {
-    /// FTDI device string.
-    #[arg(short, long, default_value = "i:0x0403:0x6001")]
+    /// libftdi device string.  (Can be:
+    ///   d:<device node>
+    ///   i:<vendor>:<product>
+    ///   i:<vendor>:<product>:<index>
+    ///   s:<vendor>:<product>:<serial>
+    /// )
+    #[arg(short, long, default_value = "i:0x0403:0x6001", verbatim_doc_comment)]
     device: String,
 
     #[command(subcommand)]
