@@ -2,6 +2,13 @@
 name = "usbrelay-rs"
 version = "0.1.0"
 edition = "2021"
+authors = ["Christopher Hoover <ch@murgatroid.com>"]
+description = "USB relay support"
+readme = "README.md"
+repository = "https://github.com/charlieh0tel/usbrelay-rs"
+license = "MIT"
+keywords = ["usb"]
+categories = ["command-line-utilities"]
 
 [dependencies]
 anyhow = "1.0.81"
