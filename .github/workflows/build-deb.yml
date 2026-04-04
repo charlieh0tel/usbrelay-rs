@@ -1,0 +1,19 @@
+name: Build Debian Package
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  build-deb:
+    uses: charlieh0tel/deb-workflows/.github/workflows/rust-build-deb.yml@main
+    with:
+      build-deps: "libftdi-dev"
+      build-deps-arm64: "libftdi-dev:arm64"
+    secrets: inherit
