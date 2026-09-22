@@ -19,6 +19,39 @@ jobs:
     with:
       build-deps: "libftdi1-dev"
 
+  # Publishes to crates.io with Trusted Publishing: crates.io is configured to
+  # trust this repository and this workflow file, and mints a token good for
+  # about half an hour in exchange for the run's OIDC claim. No registry token
+  # is stored here, so there is nothing in this repository's secrets to leak or
+  # rotate.
+  #
+  # Runs after the .deb build, so a tag whose dependencies carry an advisory
+  # never reaches crates.io: the shared workflow's audit job gates that build.
+  publish-crate:
+    needs: build-deb
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # The OIDC claim crates.io checks. Nothing else in this file needs it.
+      id-token: write
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+    - uses: dtolnay/rust-toolchain@02cb101ec7c40f2c49e1d9714d64511d8e1b74de  # v1
+      with:
+        toolchain: stable
+    # cargo publish builds the crate to verify the tarball, and this one needs
+    # libftdi to link.
+    - name: Install build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y pkg-config libftdi1-dev
+    - uses: rust-lang/crates-io-auth-action@c6f97d42243bad5fab37ca0427f495c86d5b1a18  # v1.0.5
+      id: auth
+    - run: cargo publish
+      env:
+        CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
+
   trigger-apt-repo:
     needs: build-deb
     if: startsWith(github.ref, 'refs/tags/v')
